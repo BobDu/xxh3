@@ -19,6 +19,7 @@ func AVX() {
 		const loadEarly = true
 
 		TEXT("accumAVX2", NOSPLIT, "func(acc *[8]uint64, data, key *byte, len uint64)")
+		align64()
 		// %rdi, %rsi, %rdx, %rcx
 
 		acc := Mem{Base: Load(Param("acc"), GP64())}
@@ -117,6 +118,7 @@ func AVX() {
 
 	{
 		TEXT("accumBlockAVX2", NOSPLIT, "func(acc *[8]uint64, data, key *byte)")
+		align64()
 
 		acc := Mem{Base: Load(Param("acc"), GP64())}
 		data := Mem{Base: Load(Param("data"), GP64())}

@@ -11,6 +11,7 @@ GLOBL prime_avx<>(SB), RODATA|NOPTR, $32
 // func accumAVX2(acc *[8]uint64, data *byte, key *byte, len uint64)
 // Requires: AVX, AVX2, MMX+
 TEXT ·accumAVX2(SB), NOSPLIT, $0-32
+	PCALIGN $0x40
 	MOVQ    acc+0(FP), AX
 	MOVQ    data+8(FP), CX
 	MOVQ    key+16(FP), DX
@@ -341,6 +342,7 @@ return:
 // func accumBlockAVX2(acc *[8]uint64, data *byte, key *byte)
 // Requires: AVX, AVX2
 TEXT ·accumBlockAVX2(SB), NOSPLIT, $0-24
+	PCALIGN  $0x40
 	MOVQ     acc+0(FP), AX
 	MOVQ     data+8(FP), CX
 	MOVQ     key+16(FP), DX

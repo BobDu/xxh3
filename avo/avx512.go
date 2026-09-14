@@ -16,6 +16,7 @@ func AVX512() {
 
 	{
 		TEXT("accumAVX512", NOSPLIT, "func(acc *[8]uint64, data, key *byte, len uint64)")
+		align64()
 
 		acc := Mem{Base: Load(Param("acc"), GP64())}
 		data := Mem{Base: Load(Param("data"), GP64())}
@@ -97,6 +98,7 @@ func AVX512() {
 
 	{
 		TEXT("accumBlockAVX512", NOSPLIT, "func(acc *[8]uint64, data, key *byte)")
+		align64()
 
 		acc := Mem{Base: Load(Param("acc"), GP64())}
 		data := Mem{Base: Load(Param("data"), GP64())}

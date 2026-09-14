@@ -11,16 +11,17 @@ GLOBL prime_sse<>(SB), RODATA|NOPTR, $16
 // func accumSSE(acc *[8]uint64, data *byte, key *byte, len uint64)
 // Requires: SSE2
 TEXT ·accumSSE(SB), NOSPLIT, $0-32
-	MOVQ  acc+0(FP), AX
-	MOVQ  data+8(FP), CX
-	MOVQ  key+16(FP), DX
-	MOVQ  key+16(FP), BX
-	MOVQ  len+24(FP), SI
-	MOVOU (AX), X1
-	MOVOU 16(AX), X2
-	MOVOU 32(AX), X3
-	MOVOU 48(AX), X4
-	MOVOU prime_sse<>+0(SB), X0
+	PCALIGN $0x40
+	MOVQ    acc+0(FP), AX
+	MOVQ    data+8(FP), CX
+	MOVQ    key+16(FP), DX
+	MOVQ    key+16(FP), BX
+	MOVQ    len+24(FP), SI
+	MOVOU   (AX), X1
+	MOVOU   16(AX), X2
+	MOVOU   32(AX), X3
+	MOVOU   48(AX), X4
+	MOVOU   prime_sse<>+0(SB), X0
 
 accum_large:
 	CMPQ    SI, $0x00000400
@@ -669,6 +670,7 @@ return:
 // func accumBlockSSE(acc *[8]uint64, data *byte, key *byte)
 // Requires: SSE2
 TEXT ·accumBlockSSE(SB), NOSPLIT, $0-24
+	PCALIGN $0x40
 	MOVQ    acc+0(FP), AX
 	MOVQ    data+8(FP), CX
 	MOVQ    key+16(FP), DX
