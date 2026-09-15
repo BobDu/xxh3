@@ -1,17 +1,19 @@
 package xxh3
 
+import "unsafe"
+
 import (
 	"math/bits"
 )
 
 // Hash128 returns the 128-bit hash of the byte slice.
 func Hash128(b []byte) Uint128 {
-	return hashAny128(*(*str)(ptr(&b)))
+	return hashAny128(str{ptr(unsafe.SliceData(b)), uint(len(b))})
 }
 
 // HashString128 returns the 128-bit hash of the string slice.
 func HashString128(s string) Uint128 {
-	return hashAny128(*(*str)(ptr(&s)))
+	return hashAny128(str{ptr(unsafe.StringData(s)), uint(len(s))})
 }
 
 func hashAny128(s str) (acc u128) {

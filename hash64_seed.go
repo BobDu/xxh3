@@ -1,16 +1,19 @@
 package xxh3
 
-import "math/bits"
+import (
+	"math/bits"
+	"unsafe"
+)
 
 // HashSeed returns the hash of the byte slice with given seed.
 func HashSeed(b []byte, seed uint64) uint64 {
-	return hashAnySeed(*(*str)(ptr(&b)), seed)
+	return hashAnySeed(str{ptr(unsafe.SliceData(b)), uint(len(b))}, seed)
 
 }
 
 // HashStringSeed returns the hash of the string slice with given seed.
 func HashStringSeed(s string, seed uint64) uint64 {
-	return hashAnySeed(*(*str)(ptr(&s)), seed)
+	return hashAnySeed(str{ptr(unsafe.StringData(s)), uint(len(s))}, seed)
 }
 
 func hashAnySeed(s str, seed uint64) (acc u64) {

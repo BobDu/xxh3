@@ -3,6 +3,7 @@ package xxh3
 import (
 	"encoding/binary"
 	"hash"
+	"unsafe"
 )
 
 // Hasher implements the hash.Hash interface
@@ -99,8 +100,7 @@ func (h *Hasher) WriteString(buf string) (int, error) {
 }
 
 func (h *Hasher) update(buf []byte) {
-	// relies on the data pointer being the first word in the string header
-	h.updateString(*(*string)(ptr(&buf)))
+	h.updateString(unsafe.String(unsafe.SliceData(buf), len(buf)))
 }
 
 func (h *Hasher) updateString(buf string) {
@@ -164,15 +164,15 @@ func (h *Hasher) updateString(buf string) {
 
 	for len(buf) > len(h.buf) {
 		if hasAVX512 {
-			accumBlockAVX512(&h.acc, *(*ptr)(ptr(&buf)), h.key)
+			accumBlockAVX512(&h.acc, ptr(unsafe.StringData(buf)), h.key)
 		} else if hasAVX2 {
-			accumBlockAVX2(&h.acc, *(*ptr)(ptr(&buf)), h.key)
+			accumBlockAVX2(&h.acc, ptr(unsafe.StringData(buf)), h.key)
 		} else if hasSSE2 {
-			accumBlockSSE(&h.acc, *(*ptr)(ptr(&buf)), h.key)
+			accumBlockSSE(&h.acc, ptr(unsafe.StringData(buf)), h.key)
 		} else if hasNEON {
-			accumBlockNEON(&h.acc, *(*ptr)(ptr(&buf)), h.key)
+			accumBlockNEON(&h.acc, ptr(unsafe.StringData(buf)), h.key)
 		} else {
-			accumBlockScalar(&h.acc, *(*ptr)(ptr(&buf)), h.key)
+			accumBlockScalar(&h.acc, ptr(unsafe.StringData(buf)), h.key)
 		}
 		buf = buf[_block:]
 		h.blk++

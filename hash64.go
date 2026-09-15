@@ -1,15 +1,18 @@
 package xxh3
 
-import "math/bits"
+import (
+	"math/bits"
+	"unsafe"
+)
 
 // Hash returns the hash of the byte slice.
 func Hash(b []byte) uint64 {
-	return hashAny(*(*str)(ptr(&b)))
+	return hashAny(str{ptr(unsafe.SliceData(b)), uint(len(b))})
 }
 
 // Hash returns the hash of the string slice.
 func HashString(s string) uint64 {
-	return hashAny(*(*str)(ptr(&s)))
+	return hashAny(str{ptr(unsafe.StringData(s)), uint(len(s))})
 }
 
 func hashAny(s str) (acc u64) {

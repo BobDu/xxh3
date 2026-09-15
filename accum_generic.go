@@ -1,5 +1,7 @@
 package xxh3
 
+import "unsafe"
+
 // avx512Switch is the size at which the avx512 code is used.
 // Bigger blocks benefit more.
 const avx512Switch = 1 << 10
@@ -77,7 +79,7 @@ func accumScalar(accs *[8]u64, p, secret ptr, l u64) {
 
 			l -= _stripe
 			if l > 0 {
-				p, k = ptr(ui(p)+_stripe), ptr(ui(k)+8)
+				p, k = unsafe.Add(p, _stripe), unsafe.Add(k, 8)
 			}
 		}
 
@@ -182,12 +184,12 @@ func accumScalar(accs *[8]u64, p, secret ptr, l u64) {
 
 			l -= _stripe
 			if l > 0 {
-				p, k = ptr(ui(p)+_stripe), ptr(ui(k)+8)
+				p, k = unsafe.Add(p, _stripe), unsafe.Add(k, 8)
 			}
 		}
 
 		if l > 0 {
-			p = ptr(ui(p) - uintptr(_stripe-l))
+			p = unsafe.Add(p, int(l)-_stripe)
 
 			dv0 := readU64(p, 8*0)
 			dk0 := dv0 ^ key64_121
@@ -300,7 +302,7 @@ func accumBlockScalar(accs *[8]u64, p, secret ptr) {
 			accs[off+1] += ac1
 		}
 
-		p, secret = ptr(ui(p)+_stripe), ptr(ui(secret)+8)
+		p, secret = unsafe.Add(p, _stripe), unsafe.Add(secret, 8)
 	}
 
 	// scramble accs
@@ -407,7 +409,7 @@ func accumScalarSeed(accs *[8]u64, p, secret ptr, l u64) {
 
 			l -= _stripe
 			if l > 0 {
-				p, k = ptr(ui(p)+_stripe), ptr(ui(k)+8)
+				p, k = unsafe.Add(p, _stripe), unsafe.Add(k, 8)
 			}
 		}
 
@@ -512,12 +514,12 @@ func accumScalarSeed(accs *[8]u64, p, secret ptr, l u64) {
 
 			l -= _stripe
 			if l > 0 {
-				p, k = ptr(ui(p)+_stripe), ptr(ui(k)+8)
+				p, k = unsafe.Add(p, _stripe), unsafe.Add(k, 8)
 			}
 		}
 
 		if l > 0 {
-			p = ptr(ui(p) - uintptr(_stripe-l))
+			p = unsafe.Add(p, int(l)-_stripe)
 
 			dv0 := readU64(p, 8*0)
 			dk0 := dv0 ^ readU64(secret, 121)
@@ -629,7 +631,7 @@ func accumBlockScalarSeed(accs *[8]u64, p, secret ptr) {
 				accs[off+1] += ac1
 			}
 
-			p, secret = ptr(ui(p)+_stripe), ptr(ui(secret)+8)
+			p, secret = unsafe.Add(p, _stripe), unsafe.Add(secret, 8)
 		}
 	}
 

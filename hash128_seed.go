@@ -1,17 +1,19 @@
 package xxh3
 
+import "unsafe"
+
 import (
 	"math/bits"
 )
 
 // Hash128Seed returns the 128-bit hash of the byte slice.
 func Hash128Seed(b []byte, seed uint64) Uint128 {
-	return hashAny128Seed(*(*str)(ptr(&b)), seed)
+	return hashAny128Seed(str{ptr(unsafe.SliceData(b)), uint(len(b))}, seed)
 }
 
 // HashString128Seed returns the 128-bit hash of the string slice.
 func HashString128Seed(s string, seed uint64) Uint128 {
-	return hashAny128Seed(*(*str)(ptr(&s)), seed)
+	return hashAny128Seed(str{ptr(unsafe.StringData(s)), uint(len(s))}, seed)
 }
 
 func hashAny128Seed(s str, seed uint64) (acc u128) {
